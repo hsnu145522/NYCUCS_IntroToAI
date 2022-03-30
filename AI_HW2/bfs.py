@@ -4,6 +4,8 @@ edgeFile = 'edges.csv'
 
 
 def bfs(start, end):
+    #initialize myqueue(a queue for BFS), mydict(a dictionary for recording the preceder of nodes),
+    #myset(a set to check if a node is visited)
     path = []
     dist = 0
     num_visited = 0
@@ -13,46 +15,48 @@ def bfs(start, end):
     with open(edgeFile,newline='') as csvfile:
         rows1 = csv.reader(csvfile)
         rows = []
+        #create a list rows for data in csvfile.
         for row in rows1:
             rows.append(row)
-        myqueue.put(start)
-        
-        while not(myqueue.empty()):
+            
+        myqueue.put(start) #put the start node in the queue.
+        while not(myqueue.empty()):   #BFS algorithm
             thisnode = myqueue.get()
-            if end in mydict:
+            if end in mydict:         #if end is accessable, break.
                 myset.add(end)
                 break
-            if thisnode in myset:
+            if thisnode in myset:     #if the node was visited,continue.
                 continue
             else:
-                pass
-            first = False
-            #print(rows)
+                myset.add(thisnode)   #mark thisnode as visited.
+            
+            first = False             #first is for the first row of csvfile.
             for row in rows:
                 if not(first):
                     first = True
                     continue
+                
+                #put the nodes that are adjacent to thisnode into the queue.
                 if int(row[0]) == thisnode and not(int(row[1]) in mydict):
                     myqueue.put(int(row[1]))
                     mydict[int(row[1])] = (int(row[0]),row[2])
                     
-            myset.add(thisnode)
-            #print(thisnode," ,done.")
+        
+        '''
+        Last part is to trace back from the end node.
+        Record the distance in dist and the path at list path.
+        Reverse the list order.
+        record the number of visited nodes in num_visited, which is the length of myset.
+        '''
         path.append(end)
         nownode = end
         while nownode != start:
             nownode,thisdist = mydict[nownode][0],mydict[nownode][1]
             path.append(nownode)
             dist+=float(thisdist)
-        path1 = []
-        for i in path:
-            path1.insert(0,i)
-        num_visited = len(myset)
-            
-            
-        
-            
-    return path1, dist, num_visited
+        path.reverse()
+        num_visited = len(myset)        
+    return path, dist, num_visited
    
 
 
