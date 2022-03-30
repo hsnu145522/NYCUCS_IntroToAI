@@ -19,26 +19,31 @@ def ucs(start, end):
         heappush(myqueue,(0,start))
         while not(len(myqueue)==0):
             thisdist, thisnode = heappop(myqueue)
-            if end in mydict:
-                myset.add(end)
-                break
+
             if thisnode in myset:
                 continue
             else:
-                pass
+                myset.add(thisnode)
+                if end in myset:
+                    #print("ends.")
+                    break
+            
             first = False
-            #print(rows)
+
             for row in rows:
                 if not(first):
                     first = True
                     continue
-                if int(row[0]) == thisnode and not(int(row[1]) in mydict):
+                if int(row[0]) == thisnode and not(int(row[1]) in myset):
                     heappush(myqueue,(float(row[2])+thisdist,int(row[1])))
-                    mydict[int(row[1])] = (int(row[0]),row[2])
-                if end in mydict:
-                    break
+                    if int(row[1]) in mydict:
+                        temp = mydict[int(row[1])]
+                        if temp[2]>float(row[2])+thisdist:
+                            mydict[int(row[1])] = (int(row[0]),row[2],float(row[2])+thisdist)
+                    else:
+                        mydict[int(row[1])] = (int(row[0]),row[2],float(row[2])+thisdist)
                     
-            myset.add(thisnode)
+            
             #print(thisnode," ,done.")
     path.append(end)
     nownode = end
